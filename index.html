@@ -1,0 +1,688 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Know Their Names</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #111;
+            color: #fff;
+            line-height: 1.6;
+        }
+        
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background-size: 50% 100%, 50% 100%;
+            background-position: left, right;
+            background-repeat: no-repeat;
+            position: relative;
+            transition: background-image 1s ease-in-out;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        .counter {
+            font-size: 5rem;
+            font-weight: bold;
+            margin: 2rem 0;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .counter-label {
+            font-size: 1.8rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+        
+        .content {
+            padding: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+            background: rgba(34, 34, 34, 0.9);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+        
+        .search, .filters {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        input, select {
+            padding: 1rem;
+            width: 100%;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #777;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+        
+        .profiles {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .profile {
+            background: #222;
+            padding: 2rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #444;
+            border: 3px solid #555;
+            overflow: hidden;
+        }
+        
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        /* Remove silhouette shapes */
+        .avatar::before,
+        .avatar::after {
+            display: none !important;
+            content: none !important;
+        }
+        
+        .avatar.child::before {
+            width: 30px;
+            height: 30px;
+            top: 20px;
+        }
+        
+        .avatar.child::after {
+            width: 45px;
+            height: 45px;
+            bottom: -5px;
+        }
+        
+        .avatar.teen::before {
+            width: 35px;
+            height: 35px;
+            top: 18px;
+        }
+        
+        .avatar.teen::after {
+            width: 50px;
+            height: 50px;
+            bottom: -8px;
+        }
+        
+        .avatar.elderly::before {
+            width: 35px;
+            height: 35px;
+            top: 18px;
+        }
+        
+        .avatar.elderly::after {
+            width: 50px;
+            height: 50px;
+            bottom: -8px;
+            border-radius: 50% 50% 30% 30%;
+        }
+        
+        .avatar.adult::before {
+            width: 40px;
+            height: 40px;
+            top: 15px;
+        }
+        
+        .avatar.adult::after {
+            width: 60px;
+            height: 60px;
+            bottom: -10px;
+        }
+        
+        .avatar.female::after {
+            border-radius: 50% 50% 0 0;
+            height: 70px;
+        }
+        
+        .avatar.male::after {
+            border-radius: 50% 50% 20% 20%;
+            height: 60px;
+        }
+        
+        .profile-info {
+            width: 100%;
+            text-align: left;
+        }
+        
+        .race-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: #444;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+        }
+        
+        .profile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #ff4444, #ff0000);
+        }
+        
+        .profile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .profile h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .profile p {
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+        
+        .about {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: #222;
+            border-radius: 8px;
+            line-height: 1.8;
+        }
+        
+        .audio-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 50%;
+            z-index: 1000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .audio-controls:hover {
+            transform: scale(1.1);
+        }
+        
+        .references {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: #222;
+            border-radius: 8px;
+            line-height: 1.8;
+        }
+        
+        .references a {
+            color: #ff4444;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .references a:hover {
+            color: #ff0000;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .counter {
+                font-size: 2.5rem;
+            }
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .pagination button {
+            padding: 0.5rem 1rem;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .pagination button:hover {
+            background: #444;
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.2rem;
+            color: #888;
+        }
+        
+        .error-message {
+            text-align: center;
+            padding: 2rem;
+            color: #ff4444;
+            background: rgba(255, 68, 68, 0.1);
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .header-fade {
+            animation: fadeBg 1s;
+        }
+        
+        @keyframes fadeBg {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Know Their Names</h1>
+        <div class="counter" id="deathTollCounter">0</div>
+        <div class="counter-label">Lives Lost</div>
+        <p>Remembering all victims of violence in Palestine - humans of all faiths: Muslims, Christians, Atheists, and those of unknown beliefs. Each life matters.</p>
+    </header>
+    
+    <div class="content">
+        <div class="audio-controls" id="audioControls">
+            <audio id="backgroundAudio" src="their names.mp3" autoplay loop></audio>
+            <svg id="audioIcon" width="24" height="24" viewBox="0 0 24 24" fill="white">
+                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            </svg>
+        </div>
+        <div class="controls">
+            <div class="search">
+                <input type="text" id="searchInput" placeholder="Search names...">
+            </div>
+            <div class="filters">
+                <select id="religionFilter">
+                    <option value="all">All Religions</option>
+                    <option value="muslim">Muslim</option>
+                    <option value="christian">Christian</option>
+                    <option value="unknown">Unknown</option>
+                </select>
+                <select id="ageFilter">
+                    <option value="all">All Ages</option>
+                    <option value="child">Children (0-12)</option>
+                    <option value="teen">Teens (13-19)</option>
+                    <option value="adult">Adults (20-59)</option>
+                    <option value="elderly">Elderly (60+)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div id="errorContainer"></div>
+        <div class="profiles" id="profilesContainer">
+            <div class="loading">Loading profiles...</div>
+        </div>
+        
+        <div class="pagination" id="pagination">
+            <button id="prevPage" disabled>Previous</button>
+            <span id="pageInfo">Page 1</span>
+            <button id="nextPage">Next</button>
+        </div>
+        
+        <div class="about">
+            <h2>About This Memorial</h2>
+            <p>This site was created to honor and remember the civilians from all religious and cultural backgrounds who have lost their lives in Palestine. Each number represents a human life with dreams, families, and stories.</p>
+            <p>We aim to humanize the statistics by showing you their names, ages, and backgrounds. May their memory live on.</p>
+        </div>
+        
+        <div class="references">
+            <h2>References</h2>
+            <p>Data Sources:</p>
+            <ul>
+                <li><a href="https://data.techforpalestine.org/docs/killed-in-gaza/" target="_blank">Tech For Palestine - Killed in Gaza Dataset</a></li>
+                <li><a href="https://trt.global/world/article/bccad0745686" target="_blank">TRT Global - 1,516 pages of genocide: The names of 50,000+ killed by Israel in Gaza</a></li>
+            </ul>
+            <p>Last Updated: March 23, 2025</p>
+        </div>
+    </div>
+    
+    <script>
+        // Constants
+        const ITEMS_PER_PAGE = 20;
+        let currentPage = 1;
+        let allProfiles = [];
+        let filteredProfiles = [];
+        
+        // Audio controls
+        const audioControls = document.getElementById('audioControls');
+        const backgroundAudio = document.getElementById('backgroundAudio');
+        const audioIcon = document.getElementById('audioIcon');
+        
+        backgroundAudio.muted = false;
+        audioControls.addEventListener('click', () => {
+            backgroundAudio.muted = !backgroundAudio.muted;
+            audioControls.style.background = backgroundAudio.muted ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 0, 0, 0.8)';
+            if (backgroundAudio.muted) {
+                audioIcon.style.opacity = 0.5;
+            } else {
+                audioIcon.style.opacity = 1;
+            }
+        });
+        
+        // CSV parser (simple, for this dataset)
+        function parseCSV(csv) {
+            const lines = csv.split('\n').filter(Boolean);
+            const headers = lines[0].split(',');
+            return lines.slice(1).map(line => {
+                const values = line.split(',');
+                const obj = {};
+                headers.forEach((h, i) => {
+                    obj[h.trim()] = values[i] ? values[i].trim() : '';
+                });
+                return obj;
+            });
+        }
+        // Fetch and merge all sources
+        async function fetchAllProfiles() {
+            const urls = [
+                'https://data.techforpalestine.org/api/v2/killed-in-gaza.json',
+                'https://data.techforpalestine.org/api/v2/killed-in-gaza.min.json',
+                'https://data.techforpalestine.org/api/v2/killed-in-gaza.csv'
+            ];
+            let all = [];
+            try {
+                const [jsonRes, minJsonRes, csvRes] = await Promise.all([
+                    fetch(urls[0]),
+                    fetch(urls[1]),
+                    fetch(urls[2])
+                ]);
+                const json = await jsonRes.json();
+                const minjson = await minJsonRes.json();
+                const csvText = await csvRes.text();
+                const csv = parseCSV(csvText);
+                // Merge and deduplicate by id or name+dob
+                const map = new Map();
+                function addToMap(arr) {
+                    arr.forEach(p => {
+                        const key = p.id || (p.name + (p.dob || ''));
+                        if (!map.has(key)) map.set(key, p);
+                    });
+                }
+                addToMap(json);
+                addToMap(minjson);
+                addToMap(csv);
+                all = Array.from(map.values());
+            } catch (e) {
+                showError('Failed to load all data sources. Some names may be missing.');
+            }
+            return all;
+        }
+        
+        // Show error message
+        function showError(message) {
+            const errorContainer = document.getElementById('errorContainer');
+            errorContainer.innerHTML = `<div class="error-message">${message}</div>`;
+        }
+        
+        // Get age category
+        function getAgeCategory(age) {
+            if (age <= 12) return 'child';
+            if (age <= 19) return 'teen';
+            if (age <= 59) return 'adult';
+            return 'elderly';
+        }
+        
+        // Get gender avatar class
+        function getGenderClass(gender) {
+            return gender === 'm' ? 'male' : 'female';
+        }
+        
+        // Get avatar image path
+        function getAvatarImg(age, gender) {
+            if (age <= 12) return 'child.png';
+            if (age <= 19) return gender === 'f' ? 'female_teen.jpg' : 'male_teen.jpg';
+            if (gender === 'f') return 'female.png';
+            return 'male.png';
+        }
+        
+        // Display profiles with pagination
+        function displayProfiles(profilesToShow) {
+            const container = document.getElementById('profilesContainer');
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+            const pageProfiles = profilesToShow.slice(startIndex, endIndex);
+            
+            if (!pageProfiles || pageProfiles.length === 0) {
+                container.innerHTML = '<div class="no-results">No profiles found matching your criteria.</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            pageProfiles.forEach(profile => {
+                const ageCategory = getAgeCategory(profile.age);
+                const avatarImg = getAvatarImg(profile.age, profile.sex);
+                const profileElement = document.createElement('div');
+                profileElement.className = 'profile';
+                profileElement.innerHTML = `
+                    <div class="avatar"><img src="${avatarImg}" alt="avatar"></div>
+                    <div class="profile-info">
+                        <h3>${profile.name || 'Unknown'}</h3>
+                        <div class="race-badge">Human</div>
+                        <p><strong>Age:</strong> ${profile.age || 'Unknown'} years old</p>
+                        <p><strong>Religion:</strong> ${(profile.religion || 'unknown').charAt(0).toUpperCase() + (profile.religion || 'unknown').slice(1)}</p>
+                        <p><strong>Date:</strong> ${profile.date ? new Date(profile.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Unknown'}</p>
+                        <p><strong>Memory:</strong> ${profile.tribute || 'Remembered with love and respect.'}</p>
+                    </div>
+                `;
+                container.appendChild(profileElement);
+            });
+            
+            updatePagination(profilesToShow.length);
+        }
+        
+        // Update pagination controls
+        function updatePagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+            const prevButton = document.getElementById('prevPage');
+            const nextButton = document.getElementById('nextPage');
+            const pageInfo = document.getElementById('pageInfo');
+            
+            prevButton.disabled = currentPage === 1;
+            nextButton.disabled = currentPage === totalPages;
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+        }
+        
+        // Filter profiles
+        function filterProfiles() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const religionFilter = document.getElementById('religionFilter').value;
+            const ageFilter = document.getElementById('ageFilter').value;
+            
+            filteredProfiles = allProfiles.filter(profile => {
+                const nameMatch = (profile.name || '').toLowerCase().includes(searchTerm);
+                const religionMatch = religionFilter === 'all' || (profile.religion || 'unknown') === religionFilter;
+                
+                let ageMatch = true;
+                if (ageFilter !== 'all' && profile.age) {
+                    switch(ageFilter) {
+                        case 'child': ageMatch = profile.age <= 12; break;
+                        case 'teen': ageMatch = profile.age > 12 && profile.age <= 19; break;
+                        case 'adult': ageMatch = profile.age >= 20 && profile.age <= 59; break;
+                        case 'elderly': ageMatch = profile.age >= 60; break;
+                    }
+                }
+                
+                return nameMatch && religionMatch && ageMatch;
+            });
+            
+            currentPage = 1; // Reset to first page when filtering
+            displayProfiles(filteredProfiles);
+        }
+        
+        // Initialize
+        async function initializeData() {
+            try {
+                const realData = await fetchAllProfiles();
+                if (realData && realData.length > 0) {
+                    allProfiles = realData.map(person => ({
+                        name: person.en_name || person.name || 'Unknown',
+                        age: Number(person.age) || 0,
+                        sex: person.sex || 'u',
+                        religion: person.religion || 'unknown',
+                        date: person.dob || '2023-10-07',
+                        tribute: `Remembered with love and respect.`
+                    }));
+                    filteredProfiles = [...allProfiles];
+                    animateCounter(allProfiles.length);
+                    document.getElementById('searchInput').addEventListener('input', filterProfiles);
+                    document.getElementById('religionFilter').addEventListener('change', filterProfiles);
+                    document.getElementById('ageFilter').addEventListener('change', filterProfiles);
+                    document.getElementById('prevPage').addEventListener('click', () => {
+                        if (currentPage > 1) {
+                            currentPage--;
+                            displayProfiles(filteredProfiles);
+                        }
+                    });
+                    document.getElementById('nextPage').addEventListener('click', () => {
+                        const totalPages = Math.ceil(filteredProfiles.length / ITEMS_PER_PAGE);
+                        if (currentPage < totalPages) {
+                            currentPage++;
+                            displayProfiles(filteredProfiles);
+                        }
+                    });
+                    displayProfiles(filteredProfiles);
+                } else {
+                    throw new Error('No data received from API');
+                }
+            } catch (error) {
+                console.error('Error initializing data:', error);
+                showError('Failed to load data. Using sample data instead.');
+                allProfiles = profiles;
+                filteredProfiles = [...profiles];
+                animateCounter(34000);
+                displayProfiles(filteredProfiles);
+            }
+        }
+        
+        // Initialize
+        initializeData();
+        
+        // Counter animation
+        function animateCounter(target) {
+            const counter = document.getElementById('deathTollCounter');
+            const duration = 8000; // ms
+            const start = 0;
+            const increment = target / (duration / 16); // 16ms per frame
+            
+            let current = start;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    clearInterval(timer);
+                    current = target;
+                }
+                counter.textContent = Math.floor(current).toLocaleString();
+                
+                // Add dramatic effect
+                if (current < target) {
+                    counter.style.color = `rgb(${255 * (current/target)}, ${255 * (1 - current/target)}, ${255 * (1 - current/target)})`;
+                } else {
+                    counter.style.color = '#ff0000';
+                }
+            }, 16);
+        }
+        
+        // Header background shuffle with two random images side by side, each with its own overlay
+        const headerImages = [
+            'help.jpeg', 'help0.jpeg', 'help01.jpeg', 'help02.jpeg', 'help03.jpeg', 'help04.jpeg', 'help05.jpeg', 'help06.jpeg',
+            'help1.jpeg', 'help2.jpeg', 'help3.jpeg', 'help4.jpeg', 'help5.jpeg', 'help6.jpeg', 'help7.jpeg', 'help8.jpeg', 'help9.jpeg'
+        ];
+        const header = document.querySelector('header');
+        function getTwoRandomImages() {
+            let idx1 = Math.floor(Math.random() * headerImages.length);
+            let idx2;
+            do {
+                idx2 = Math.floor(Math.random() * headerImages.length);
+            } while (idx2 === idx1);
+            return [headerImages[idx1], headerImages[idx2]];
+        }
+        function setHeaderBgRandom() {
+            const [img1, img2] = getTwoRandomImages();
+            header.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${img1}'), url('${img2}')`;
+            header.classList.remove('header-fade');
+            void header.offsetWidth; // force reflow for animation
+            header.classList.add('header-fade');
+        }
+        setHeaderBgRandom();
+        setInterval(setHeaderBgRandom, 6000);
+    </script>
+</body>
+</html>
