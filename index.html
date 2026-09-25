@@ -1,702 +1,844 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Know Their Names - Gaza Children Memorial</title>
-    <meta name="description" content="A memorial honoring the children of Gaza. A digital remembrance project documenting names and stories.">
-    <meta property="og:title" content="Know Their Names - Gaza Memorial">
-    <meta property="og:description" content="Honoring and remembering the children of Gaza through this digital memorial.">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="logo.png">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍉</text></svg>">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
-        
-        body {
-            background-color: #111;
-            color: #fff;
-            line-height: 1.6;
-        }
-        
-        header {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 2rem;
-            background-size: 50% 100%, 50% 100%;
-            background-position: left, right;
-            background-repeat: no-repeat;
-            position: relative;
-            transition: background-image 1s ease-in-out;
-        }
-        
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 2rem;
-        }
-        
-        .counter {
-            font-size: 5rem;
-            font-weight: bold;
-            margin: 2rem 0;
-            text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .counter-label {
-            font-size: 1.8rem;
-            opacity: 0.9;
-            margin-bottom: 1rem;
-        }
-        
-        .content {
-            padding: 3rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-            background: rgba(34, 34, 34, 0.9);
-            padding: 1.5rem;
-            border-radius: 8px;
-        }
-        
-        .search, .filters {
-            flex: 1;
-            min-width: 250px;
-        }
-        
-        .filters {
-            display: flex;
-            gap: 1rem;
-        }
-        
-        input, select {
-            padding: 1rem;
-            width: 100%;
-            background: #333;
-            color: white;
-            border: 1px solid #555;
-            border-radius: 4px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        input:focus, select:focus {
-            outline: none;
-            border-color: #777;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-        }
-        
-        .profiles {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        
-        .profile {
-            background: #222;
-            padding: 2rem;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            border: 1px solid #333;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-        
-        .avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #444;
-            border: 3px solid #555;
-            overflow: hidden;
-        }
-        
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-        
-        /* Remove silhouette shapes */
-        .avatar::before,
-        .avatar::after {
-            display: none !important;
-            content: none !important;
-        }
-        
-        .avatar.child::before {
-            width: 30px;
-            height: 30px;
-            top: 20px;
-        }
-        
-        .avatar.child::after {
-            width: 45px;
-            height: 45px;
-            bottom: -5px;
-        }
-        
-        .avatar.teen::before {
-            width: 35px;
-            height: 35px;
-            top: 18px;
-        }
-        
-        .avatar.teen::after {
-            width: 50px;
-            height: 50px;
-            bottom: -8px;
-        }
-        
-        .avatar.elderly::before {
-            width: 35px;
-            height: 35px;
-            top: 18px;
-        }
-        
-        .avatar.elderly::after {
-            width: 50px;
-            height: 50px;
-            bottom: -8px;
-            border-radius: 50% 50% 30% 30%;
-        }
-        
-        .avatar.adult::before {
-            width: 40px;
-            height: 40px;
-            top: 15px;
-        }
-        
-        .avatar.adult::after {
-            width: 60px;
-            height: 60px;
-            bottom: -10px;
-        }
-        
-        .avatar.female::after {
-            border-radius: 50% 50% 0 0;
-            height: 70px;
-        }
-        
-        .avatar.male::after {
-            border-radius: 50% 50% 20% 20%;
-            height: 60px;
-        }
-        
-        .profile-info {
-            width: 100%;
-            text-align: left;
-        }
-        
-        .race-badge {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            background: #444;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            margin: 0.5rem 0;
-        }
-        
-        .profile::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #ff4444, #ff0000);
-        }
-        
-        .profile:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-        }
-        
-        .profile h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .profile p {
-            margin-bottom: 0.5rem;
-            opacity: 0.8;
-        }
-        
-        .about {
-            margin-top: 3rem;
-            padding: 2rem;
-            background: #222;
-            border-radius: 8px;
-            line-height: 1.8;
-        }
-        
-        .audio-controls {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 10px;
-            border-radius: 50%;
-            z-index: 1000;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .audio-controls:hover {
-            transform: scale(1.1);
-        }
-        
-        .references {
-            margin-top: 3rem;
-            padding: 2rem;
-            background: #222;
-            border-radius: 8px;
-            line-height: 1.8;
-        }
-        
-        .references a {
-            color: #ff4444;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .references a:hover {
-            color: #ff0000;
-        }
-        
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .counter {
-                font-size: 2.5rem;
-            }
-        }
-        
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-        
-        .pagination button {
-            padding: 0.5rem 1rem;
-            background: #333;
-            color: white;
-            border: 1px solid #555;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .pagination button:hover {
-            background: #444;
-        }
-        
-        .pagination button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            font-size: 1.2rem;
-            color: #888;
-        }
-        
-        .error-message {
-            text-align: center;
-            padding: 2rem;
-            color: #ff4444;
-            background: rgba(255, 68, 68, 0.1);
-            border-radius: 8px;
-            margin: 1rem 0;
-        }
-        
-        .header-fade {
-            animation: fadeBg 1s;
-        }
-        
-        @keyframes fadeBg {
-            0% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remember Gaza — Digital Memorial | Know Their Names</title>
+  <meta name="description" content="A sacred digital memorial honoring every life lost in Gaza. Thousands of names, stories, and faces. We remember. We witness. We will not forget.">
+  <meta property="og:title" content="Remember Gaza — Digital Memorial">
+  <meta property="og:description" content="Honoring the lives lost in Gaza. A memorial of names, stories, and humanity.">
+  <meta property="og:image" content="logo.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍉</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-deep: #0a0a14;
+      --bg-card: rgba(18, 18, 36, 0.85);
+      --red: #dc2626;
+      --red-dark: #991b1b;
+      --red-glow: rgba(220, 38, 38, 0.3);
+      --gold: #fbbf24;
+      --gold-dim: rgba(251, 191, 36, 0.15);
+      --text: #f0f0f0;
+      --text-dim: #8888a0;
+      --font: 'Inter', sans-serif;
+      --font-arabic: 'Amiri', serif;
+      --radius: 12px;
+      --radius-lg: 20px;
+      --transition: 0.3s ease;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg-deep);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Floating particles / dust */
+    #particles-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 24px;
+      position: relative;
+      z-index: 1;
+      background: linear-gradient(180deg, rgba(10,10,20,0.3) 0%, rgba(10,10,20,0.6) 50%, rgba(10,10,20,1) 100%);
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 50%, rgba(220, 38, 38, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 50%, rgba(220, 38, 38, 0.05) 0%, transparent 50%);
+      z-index: -1;
+    }
+
+    /* Slideshow background */
+    .slideshow-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+    }
+
+    .slideshow-bg img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+    }
+
+    .slideshow-bg img.active { opacity: 1; }
+
+    .slideshow-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 1;
+    }
+
+    .hero-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      animation: pulse-icon 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-icon {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: 900;
+      letter-spacing: -2px;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #fff 30%, var(--red) 70%, var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero .subtitle {
+      font-size: 1.3rem;
+      color: var(--text-dim);
+      max-width: 600px;
+      line-height: 1.7;
+    }
+
+    /* Counter */
+    .counter-container {
+      margin: 40px 0;
+      position: relative;
+    }
+
+    .counter-number {
+      font-size: 5rem;
+      font-weight: 900;
+      color: var(--red);
+      text-shadow: 0 0 30px var(--red-glow), 0 0 60px var(--red-glow);
+      animation: counter-pulse 2s ease-in-out infinite;
+      font-variant-numeric: tabular-nums;
+    }
+
+    @keyframes counter-pulse {
+      0%, 100% { text-shadow: 0 0 30px var(--red-glow), 0 0 60px var(--red-glow); }
+      50% { text-shadow: 0 0 40px var(--red-glow), 0 0 80px var(--red-glow), 0 0 120px var(--red-glow); }
+    }
+
+    .counter-label {
+      font-size: 1.2rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-top: 8px;
+    }
+
+    .hero p {
+      max-width: 550px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    .hero .scroll-hint {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      animation: bounce-down 2s infinite;
+    }
+
+    @keyframes bounce-down {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* Content */
+    .content {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Section Title */
+    .section-title {
+      text-align: center;
+      margin: 60px 0 40px;
+    }
+
+    .section-title h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+    }
+
+    .section-title p {
+      color: var(--text-dim);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* Controls */
+    .controls-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 32px;
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      backdrop-filter: blur(20px);
+    }
+
+    .controls-bar .search-wrap {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+
+    .controls-bar .search-wrap input {
+      width: 100%;
+      padding: 14px 18px 14px 44px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+
+    .controls-bar .search-wrap input:focus {
+      outline: none;
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px var(--red-glow);
+    }
+
+    .controls-bar .search-wrap .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 1.1rem;
+    }
+
+    .controls-bar select {
+      padding: 14px 18px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.9rem;
+      cursor: pointer;
+      min-width: 140px;
+    }
+
+    .controls-bar select:focus { outline: none; border-color: var(--red); }
+
+    /* Profile Grid */
+    .memorial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .memorial-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: card-fade-in 0.4s ease forwards;
+      opacity: 0;
+    }
+
+    .memorial-card:nth-child(1) { animation-delay: 0.02s; }
+    .memorial-card:nth-child(2) { animation-delay: 0.06s; }
+    .memorial-card:nth-child(3) { animation-delay: 0.10s; }
+    .memorial-card:nth-child(4) { animation-delay: 0.14s; }
+    .memorial-card:nth-child(5) { animation-delay: 0.18s; }
+    .memorial-card:nth-child(6) { animation-delay: 0.22s; }
+
+    @keyframes card-fade-in {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .memorial-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--red), transparent);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .memorial-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(220, 38, 38, 0.3);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+
+    .memorial-card:hover::before { opacity: 1; }
+
+    .memorial-card .avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      margin-bottom: 14px;
+      border: 3px solid rgba(255,255,255,0.08);
+      overflow: hidden;
+      background: var(--bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .memorial-card .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .memorial-card .avatar .initials {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-dim);
+    }
+
+    .memorial-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .memorial-card .badge {
+      display: inline-block;
+      padding: 4px 14px;
+      background: rgba(220, 38, 38, 0.1);
+      border: 1px solid rgba(220, 38, 38, 0.2);
+      border-radius: 50px;
+      font-size: 0.75rem;
+      color: var(--red);
+      margin: 8px 0;
+    }
+
+    .memorial-card .info-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 0.85rem;
+    }
+
+    .memorial-card .info-row .label { color: var(--text-dim); }
+    .memorial-card .info-row .value { font-weight: 500; }
+
+    .memorial-card .tribute {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    .memorial-card .candle {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      font-size: 0.8rem;
+      opacity: 0.4;
+      animation: flicker 3s infinite;
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.1); }
+    }
+
+    /* Pagination */
+    .pagination-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin: 40px 0;
+    }
+
+    .pagination-bar button {
+      padding: 12px 24px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .pagination-bar button:hover:not(:disabled) {
+      background: var(--red);
+      border-color: var(--red);
+      transform: translateY(-2px);
+    }
+
+    .pagination-bar button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .pagination-bar .page-info {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+
+    /* About / References */
+    .info-section {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      margin-top: 60px;
+      backdrop-filter: blur(10px);
+    }
+
+    .info-section h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .info-section p {
+      color: var(--text-dim);
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+
+    .info-section a {
+      color: var(--red);
+      text-decoration: none;
+    }
+
+    .info-section a:hover { text-decoration: underline; }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 40px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      margin-top: 60px;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.5rem; }
+      .counter-number { font-size: 3rem; }
+      .controls-bar { flex-direction: column; }
+      .controls-bar .search-wrap { width: 100%; }
+      .controls-bar select { width: 100%; }
+      .memorial-grid { grid-template-columns: 1fr; }
+      .info-section { padding: 24px; }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 1.8rem; }
+      .content { padding: 0 16px 40px; }
+      .section-title h2 { font-size: 1.6rem; }
+    }
+
+    /* Loading & Error */
+    .loading-spinner {
+      text-align: center;
+      padding: 60px;
+      color: var(--text-dim);
+    }
+
+    .loading-spinner .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255,255,255,0.05);
+      border-top-color: var(--red);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg {
+      text-align: center;
+      padding: 40px;
+      background: rgba(220, 38, 38, 0.08);
+      border: 1px solid var(--red-glow);
+      border-radius: var(--radius);
+      color: var(--red);
+      margin: 20px 0;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 60px;
+      color: var(--text-dim);
+    }
+
+    /* Audio toggle */
+    .audio-float {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 100;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      backdrop-filter: blur(20px);
+      transition: var(--transition);
+      color: var(--text);
+    }
+
+    .audio-float:hover { border-color: var(--red); transform: scale(1.1); }
+    .audio-float.muted { opacity: 0.5; }
+  </style>
 </head>
 <body>
-    <div id="audioOverlay" style="display:none;position:fixed;z-index:2000;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);color:#fff;display:flex;align-items:center;justify-content:center;font-size:2rem;flex-direction:column;">
-        <span>🔊 Tap to enable audio</span>
-        <button style="margin-top:2rem;padding:1rem 2rem;font-size:1.2rem;border:none;border-radius:8px;background:#ff4444;color:#fff;cursor:pointer;">Enable Audio</button>
+  <canvas id="particles-canvas"></canvas>
+
+  <div class="slideshow-bg" id="slideshow">
+    <img src="help0.jpeg" alt="" class="active">
+    <img src="help1.jpeg" alt="">
+    <img src="help2.jpeg" alt="">
+    <img src="help3.jpeg" alt="">
+  </div>
+
+  <section class="hero">
+    <div class="hero-icon">🍉</div>
+    <h1>Know Their Names</h1>
+    <p class="subtitle">A digital memorial honoring every life lost — remembering each name, each story, each soul.</p>
+    <div class="counter-container">
+      <div class="counter-number" id="deathTollCounter">0</div>
+      <div class="counter-label">Lives Lost</div>
     </div>
-    <header>
-        <h1>Know Their Names</h1>
-        <div class="counter" id="deathTollCounter">0</div>
-        <div class="counter-label">Lives Lost</div>
-        <p>Remembering all victims of violence in Palestine - humans of all faiths: Muslims, Christians, Atheists, and those of unknown beliefs. Each life matters.</p>
-    </header>
-    
-    <div class="content">
-        <div class="audio-controls" id="audioControls">
-            <audio id="backgroundAudio" src="their names.mp3" autoplay loop></audio>
-            <svg id="audioIcon" width="24" height="24" viewBox="0 0 24 24" fill="white">
-                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-            </svg>
-        </div>
-        <div class="controls">
-            <div class="search">
-                <input type="text" id="searchInput" placeholder="Search names...">
-            </div>
-            <div class="filters">
-                <select id="religionFilter">
-                    <option value="all">All Religions</option>
-                    <option value="muslim">Muslim</option>
-                    <option value="christian">Christian</option>
-                    <option value="unknown">Unknown</option>
-                </select>
-                <select id="ageFilter">
-                    <option value="all">All Ages</option>
-                    <option value="child">Children (0-12)</option>
-                    <option value="teen">Teens (13-19)</option>
-                    <option value="adult">Adults (20-59)</option>
-                    <option value="elderly">Elderly (60+)</option>
-                </select>
-            </div>
-        </div>
-        
-        <div id="errorContainer"></div>
-        <div class="profiles" id="profilesContainer">
-            <div class="loading">Loading profiles...</div>
-        </div>
-        
-        <div class="pagination" id="pagination">
-            <button id="prevPage" disabled>Previous</button>
-            <span id="pageInfo">Page 1</span>
-            <button id="nextPage">Next</button>
-        </div>
-        
-        <div class="about">
-            <h2>About This Memorial</h2>
-            <p>This site was created to honor and remember the civilians from all religious and cultural backgrounds who have lost their lives in Palestine. Each number represents a human life with dreams, families, and stories.</p>
-            <p>We aim to humanize the statistics by showing you their names, ages, and backgrounds. May their memory live on.</p>
-        </div>
-        
-        <div class="references">
-            <h2>References</h2>
-            <p>Data Sources:</p>
-            <ul>
-                <li><a href="https://data.techforpalestine.org/docs/killed-in-gaza/" target="_blank">Tech For Palestine - Killed in Gaza Dataset</a></li>
-                <li><a href="https://trt.global/world/article/bccad0745686" target="_blank">TRT Global - 1,516 pages of genocide: The names of 50,000+ killed by Israel in Gaza</a></li>
-            </ul>
-            <p>Last Updated: March 23, 2025</p>
-        </div>
+    <p>Muslims, Christians, Atheists — every faith, every background. Each life matters, each loss diminishes us all. We remember. We witness. We will not forget.</p>
+    <div class="scroll-hint">↓ Scroll to see their names</div>
+  </section>
+
+  <div class="content">
+    <div class="section-title">
+      <h2>🕯️ The Memorial Wall</h2>
+      <p>Every card represents a human life. Browse, search, and remember them.</p>
     </div>
-    
-    <script>
-        // Constants
-        const ITEMS_PER_PAGE = 20;
-        let currentPage = 1;
-        let allProfiles = [];
-        let filteredProfiles = [];
-        
-        // Audio controls
-        const audioControls = document.getElementById('audioControls');
-        const backgroundAudio = document.getElementById('backgroundAudio');
-        const audioIcon = document.getElementById('audioIcon');
-        
-        backgroundAudio.muted = false;
-        audioControls.addEventListener('click', () => {
-            backgroundAudio.muted = !backgroundAudio.muted;
-            audioControls.style.background = backgroundAudio.muted ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 0, 0, 0.8)';
-            if (backgroundAudio.muted) {
-                audioIcon.style.opacity = 0.5;
-            } else {
-                audioIcon.style.opacity = 1;
-            }
-        });
-        
-        // Fetch data from API with pagination
-        async function fetchData() {
-            try {
-                const response = await fetch('https://data.techforpalestine.org/api/v2/killed-in-gaza.json');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                showError('Failed to load data. Please try again later.');
-                return [];
-            }
+
+    <div class="controls-bar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search names...">
+      </div>
+      <select id="religionFilter">
+        <option value="all">All Religions</option>
+        <option value="muslim">Muslim</option>
+        <option value="christian">Christian</option>
+        <option value="unknown">Unknown</option>
+      </select>
+      <select id="ageFilter">
+        <option value="all">All Ages</option>
+        <option value="child">Children (0-12)</option>
+        <option value="teen">Teens (13-19)</option>
+        <option value="adult">Adults (20-59)</option>
+        <option value="elderly">Elderly (60+)</option>
+      </select>
+    </div>
+
+    <div id="errorContainer"></div>
+    <div class="memorial-grid" id="profilesContainer">
+      <div class="loading-spinner"><div class="spinner"></div><p>Loading profiles...</p></div>
+    </div>
+
+    <div class="pagination-bar">
+      <button id="prevPage" disabled>← Previous</button>
+      <span class="page-info" id="pageInfo">Page 1</span>
+      <button id="nextPage">Next →</button>
+    </div>
+
+    <div class="info-section">
+      <h3>🕊️ About This Memorial</h3>
+      <p>This site exists to honor and remember every civilian who has lost their life in Gaza — regardless of faith, background, or age. Each number is a human being with dreams, family, and a story cut short.</p>
+      <p>By showing their names, ages, and backgrounds, we aim to restore the humanity behind the statistics. Memory is resistance. Witness is obligation.</p>
+      <p style="margin-top:20px;"><strong>Data Sources:</strong></p>
+      <p><a href="https://data.techforpalestine.org/docs/killed-in-gaza/" target="_blank">Tech For Palestine — Killed in Gaza Dataset</a> &nbsp;|&nbsp; <a href="https://trt.global/world/article/bccad0745686" target="_blank">TRT Global — The Names of 50,000+ Killed</a></p>
+    </div>
+
+    <footer class="footer">
+      <p>🕯️ In loving memory of every soul lost. We will not forget.</p>
+    </footer>
+  </div>
+
+  <div class="audio-float muted" id="audioToggle">🔇</div>
+  <audio id="bgAudio" loop><source src="their names.mp3" type="audio/mpeg"></audio>
+
+  <script>
+    const ITEMS_PER_PAGE = 20;
+    let currentPage = 1;
+    let allProfiles = [];
+    let filteredProfiles = [];
+
+    // Background slideshow
+    (function slideshow() {
+      const imgs = document.querySelectorAll('#slideshow img');
+      let idx = 0;
+      setInterval(() => {
+        imgs.forEach(i => i.classList.remove('active'));
+        idx = (idx + 1) % imgs.length;
+        imgs[idx].classList.add('active');
+      }, 5000);
+    })();
+
+    // Particles background
+    (function particles() {
+      const canvas = document.getElementById('particles-canvas');
+      const ctx = canvas.getContext('2d');
+      let w, h, particles = [];
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      class Particle {
+        constructor() {
+          this.x = Math.random() * w;
+          this.y = Math.random() * h;
+          this.size = Math.random() * 3 + 0.5;
+          this.speedX = (Math.random() - 0.5) * 0.5;
+          this.speedY = (Math.random() - 0.5) * 0.5;
+          this.opacity = Math.random() * 0.3 + 0.1;
         }
-        
-        // Show error message
-        function showError(message) {
-            const errorContainer = document.getElementById('errorContainer');
-            errorContainer.innerHTML = `<div class="error-message">${message}</div>`;
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          if (this.x < 0 || this.x > w) this.speedX *= -1;
+          if (this.y < 0 || this.y > h) this.speedY *= -1;
         }
-        
-        // Get age category
-        function getAgeCategory(age) {
-            if (age <= 12) return 'child';
-            if (age <= 19) return 'teen';
-            if (age <= 59) return 'adult';
-            return 'elderly';
+        draw() {
+          ctx.fillStyle = `rgba(220, 38, 38, ${this.opacity})`;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
         }
-        
-        // Get gender avatar class
-        function getGenderClass(gender) {
-            return gender === 'm' ? 'male' : 'female';
+      }
+
+      for (let i = 0; i < 100; i++) particles.push(new Particle());
+
+      function animate() {
+        ctx.clearRect(0, 0, w, h);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+
+    // Audio
+    const audio = document.getElementById('bgAudio');
+    document.getElementById('audioToggle').addEventListener('click', function() {
+      if (this.classList.contains('muted')) {
+        audio.play().catch(() => {});
+        this.classList.remove('muted');
+        this.textContent = '🔊';
+      } else {
+        audio.pause();
+        this.classList.add('muted');
+        this.textContent = '🔇';
+      }
+    });
+
+    // Data fetching
+    async function fetchData() {
+      const res = await fetch('https://data.techforpalestine.org/api/v2/killed-in-gaza.json');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    }
+
+    function showError(msg) {
+      document.getElementById('errorContainer').innerHTML = `<div class="error-msg">⚠️ ${msg}</div>`;
+    }
+
+    function getAge(age) {
+      if (age <= 12) return 'child';
+      if (age <= 19) return 'teen';
+      if (age <= 59) return 'adult';
+      return 'elderly';
+    }
+
+    function getInitials(name) {
+      if (!name) return '?';
+      return name.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
+    }
+
+    function displayProfiles(profiles) {
+      const container = document.getElementById('profilesContainer');
+      const start = (currentPage - 1) * ITEMS_PER_PAGE;
+      const page = profiles.slice(start, start + ITEMS_PER_PAGE);
+
+      if (!page.length) {
+        container.innerHTML = '<div class="no-results">🕊️ No profiles found matching your criteria.</div>';
+        return;
+      }
+
+      container.innerHTML = page.map((p, i) => `
+        <div class="memorial-card" style="animation-delay:${i * 0.04}s">
+          <div class="avatar">
+            ${p.img ? `<img src="${p.img}" alt="${p.name || ''}">` : `<span class="initials">${getInitials(p.name)}</span>`}
+          </div>
+          <h3>${p.name || 'Unknown'}</h3>
+          <span class="badge">🕊️ Human</span>
+          <div class="info-row">
+            <span class="label">Age</span>
+            <span class="value">${p.age || '?'} years</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Religion</span>
+            <span class="value">${(p.religion || 'unknown').charAt(0).toUpperCase() + (p.religion || 'unknown').slice(1)}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Date</span>
+            <span class="value">${p.date ? new Date(p.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Unknown'}</span>
+          </div>
+          <div class="tribute">${p.tribute || 'Remembered with love and respect.'}</div>
+          <span class="candle">🕯️</span>
+        </div>
+      `).join('');
+
+      document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${Math.ceil(profiles.length / ITEMS_PER_PAGE)}`;
+      document.getElementById('prevPage').disabled = currentPage === 1;
+      document.getElementById('nextPage').disabled = currentPage >= Math.ceil(profiles.length / ITEMS_PER_PAGE);
+    }
+
+    function filterProfiles() {
+      const term = document.getElementById('searchInput').value.toLowerCase();
+      const rel = document.getElementById('religionFilter').value;
+      const ageF = document.getElementById('ageFilter').value;
+
+      filteredProfiles = allProfiles.filter(p => {
+        const nameMatch = (p.name || '').toLowerCase().includes(term);
+        const relMatch = rel === 'all' || (p.religion || 'unknown') === rel;
+        let ageMatch = true;
+        if (ageF !== 'all' && p.age != null) {
+          const cat = getAge(p.age);
+          ageMatch = cat === ageF;
         }
-        
-        // Get avatar image path
-        function getAvatarImg(age, gender) {
-            if (age <= 12) return 'child.png';
-            if (age <= 19) return gender === 'f' ? 'female_teen.jpg' : 'male_teen.jpg';
-            if (gender === 'f') return 'female.png';
-            return 'male.png';
+        return nameMatch && relMatch && ageMatch;
+      });
+
+      currentPage = 1;
+      displayProfiles(filteredProfiles);
+    }
+
+    function animateCounter(target) {
+      const el = document.getElementById('deathTollCounter');
+      let current = 0;
+      const step = Math.ceil(target / 250);
+      const interval = setInterval(() => {
+        current = Math.min(current + step, target);
+        el.textContent = current.toLocaleString();
+        if (current >= target) clearInterval(interval);
+      }, 16);
+    }
+
+    async function initialize() {
+      try {
+        const data = await fetchData();
+        if (data && data.length > 0) {
+          allProfiles = data.map(p => ({
+            name: p.en_name || p.name || 'Unknown',
+            age: p.age,
+            sex: p.sex || 'u',
+            religion: p.religion || 'unknown',
+            date: p.dob,
+            img: null,
+            tribute: `Remembered with love and respect.`
+          }));
+        } else throw new Error('No data');
+      } catch (e) {
+        showError('Could not load live data. Using sample dataset.');
+        allProfiles = [];
+        for (let i = 0; i < 100; i++) {
+          const names = ['Ahmad', 'Mariam', 'Yousuf', 'Layla', 'Omar', 'Fatima', 'Hassan', 'Aisha', 'Khalid', 'Noor'];
+          allProfiles.push({
+            name: names[i % names.length] + ' ' + ['Al-Masri', 'Al-Qudsi', 'Abu Hassan', 'Al-Ghazzawi'][i % 4],
+            age: Math.floor(Math.random() * 80) + 1,
+            religion: ['muslim', 'christian', 'unknown'][Math.floor(Math.random() * 3)],
+            date: new Date(2023, 9, 7 + Math.floor(Math.random() * 365)).toISOString().split('T')[0],
+            tribute: 'Remembered with love and respect.'
+          });
         }
-        
-        // Display profiles with pagination
-        function displayProfiles(profilesToShow) {
-            const container = document.getElementById('profilesContainer');
-            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-            const endIndex = startIndex + ITEMS_PER_PAGE;
-            const pageProfiles = profilesToShow.slice(startIndex, endIndex);
-            
-            if (!pageProfiles || pageProfiles.length === 0) {
-                container.innerHTML = '<div class="no-results">No profiles found matching your criteria.</div>';
-                return;
-            }
-            
-            container.innerHTML = '';
-            pageProfiles.forEach(profile => {
-                const ageCategory = getAgeCategory(profile.age);
-                const avatarImg = getAvatarImg(profile.age, profile.sex);
-                const profileElement = document.createElement('div');
-                profileElement.className = 'profile';
-                profileElement.innerHTML = `
-                    <div class="avatar"><img src="${avatarImg}" alt="avatar"></div>
-                    <div class="profile-info">
-                        <h3>${profile.name || 'Unknown'}</h3>
-                        <div class="race-badge">Human</div>
-                        <p><strong>Age:</strong> ${profile.age || 'Unknown'} years old</p>
-                        <p><strong>Religion:</strong> ${(profile.religion || 'unknown').charAt(0).toUpperCase() + (profile.religion || 'unknown').slice(1)}</p>
-                        <p><strong>Date:</strong> ${profile.date ? new Date(profile.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Unknown'}</p>
-                        <p><strong>Memory:</strong> ${profile.tribute || 'Remembered with love and respect.'}</p>
-                    </div>
-                `;
-                container.appendChild(profileElement);
-            });
-            
-            updatePagination(profilesToShow.length);
-        }
-        
-        // Update pagination controls
-        function updatePagination(totalItems) {
-            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-            const prevButton = document.getElementById('prevPage');
-            const nextButton = document.getElementById('nextPage');
-            const pageInfo = document.getElementById('pageInfo');
-            
-            prevButton.disabled = currentPage === 1;
-            nextButton.disabled = currentPage === totalPages;
-            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-        }
-        
-        // Filter profiles
-        function filterProfiles() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const religionFilter = document.getElementById('religionFilter').value;
-            const ageFilter = document.getElementById('ageFilter').value;
-            
-            filteredProfiles = allProfiles.filter(profile => {
-                const nameMatch = (profile.name || '').toLowerCase().includes(searchTerm);
-                const religionMatch = religionFilter === 'all' || (profile.religion || 'unknown') === religionFilter;
-                
-                let ageMatch = true;
-                if (ageFilter !== 'all' && profile.age) {
-                    switch(ageFilter) {
-                        case 'child': ageMatch = profile.age <= 12; break;
-                        case 'teen': ageMatch = profile.age > 12 && profile.age <= 19; break;
-                        case 'adult': ageMatch = profile.age >= 20 && profile.age <= 59; break;
-                        case 'elderly': ageMatch = profile.age >= 60; break;
-                    }
-                }
-                
-                return nameMatch && religionMatch && ageMatch;
-            });
-            
-            currentPage = 1; // Reset to first page when filtering
-            displayProfiles(filteredProfiles);
-        }
-        
-        // Initialize
-        async function initializeData() {
-            try {
-                const realData = await fetchData();
-                if (realData && realData.length > 0) {
-                    allProfiles = realData.map(person => ({
-                        name: person.en_name || person.name || 'Unknown',
-                        age: person.age || 0,
-                        sex: person.sex || 'u',
-                        religion: person.religion || 'unknown',
-                        date: person.dob || '2023-10-07',
-                        tribute: `Remembered with love and respect.`
-                    }));
-                    
-                    filteredProfiles = [...allProfiles];
-                    
-                    // Update counter
-                    animateCounter(allProfiles.length);
-                    
-                    // Set up event listeners
-                    document.getElementById('searchInput').addEventListener('input', filterProfiles);
-                    document.getElementById('religionFilter').addEventListener('change', filterProfiles);
-                    document.getElementById('ageFilter').addEventListener('change', filterProfiles);
-                    
-                    // Set up pagination
-                    document.getElementById('prevPage').addEventListener('click', () => {
-                        if (currentPage > 1) {
-                            currentPage--;
-                            displayProfiles(filteredProfiles);
-                        }
-                    });
-                    
-                    document.getElementById('nextPage').addEventListener('click', () => {
-                        const totalPages = Math.ceil(filteredProfiles.length / ITEMS_PER_PAGE);
-                        if (currentPage < totalPages) {
-                            currentPage++;
-                            displayProfiles(filteredProfiles);
-                        }
-                    });
-                    
-                    // Display initial profiles
-                    displayProfiles(filteredProfiles);
-                } else {
-                    throw new Error('No data received from API');
-                }
-            } catch (error) {
-                console.error('Error initializing data:', error);
-                showError('Failed to load data. Using sample data instead.');
-                
-                // Fallback to sample data
-                allProfiles = profiles;
-                filteredProfiles = [...profiles];
-                animateCounter(34000);
-                displayProfiles(filteredProfiles);
-            }
-        }
-        
-        // Initialize
-        initializeData();
-        
-        // Counter animation
-        function animateCounter(target) {
-            const counter = document.getElementById('deathTollCounter');
-            const duration = 8000; // ms
-            const start = 0;
-            const increment = target / (duration / 16); // 16ms per frame
-            
-            let current = start;
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    clearInterval(timer);
-                    current = target;
-                }
-                counter.textContent = Math.floor(current).toLocaleString();
-                
-                // Add dramatic effect
-                if (current < target) {
-                    counter.style.color = `rgb(${255 * (current/target)}, ${255 * (1 - current/target)}, ${255 * (1 - current/target)})`;
-                } else {
-                    counter.style.color = '#ff0000';
-                }
-            }, 16);
-        }
-        
-        // Header background shuffle with two random images side by side, each with its own overlay
-        const headerImages = [
-            'help.jpeg', 'help0.jpeg', 'help01.jpeg', 'help02.jpeg', 'help03.jpeg', 'help04.jpeg', 'help05.jpeg', 'help06.jpeg',
-            'help1.jpeg', 'help2.jpeg', 'help3.jpeg', 'help4.jpeg', 'help5.jpeg', 'help6.jpeg', 'help7.jpeg', 'help8.jpeg', 'help9.jpeg'
-        ];
-        const header = document.querySelector('header');
-        function getTwoRandomImages() {
-            let idx1 = Math.floor(Math.random() * headerImages.length);
-            let idx2;
-            do {
-                idx2 = Math.floor(Math.random() * headerImages.length);
-            } while (idx2 === idx1);
-            return [headerImages[idx1], headerImages[idx2]];
-        }
-        function setHeaderBgRandom() {
-            const [img1, img2] = getTwoRandomImages();
-            header.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${img1}'), url('${img2}')`;
-            header.classList.remove('header-fade');
-            void header.offsetWidth; // force reflow for animation
-            header.classList.add('header-fade');
-        }
-        setHeaderBgRandom();
-        setInterval(setHeaderBgRandom, 6000);
-        
-        // Ensure audio plays immediately on site open (with fallback for user interaction and overlay)
-        window.addEventListener('DOMContentLoaded', function() {
-            const backgroundAudio = document.getElementById('backgroundAudio');
-            const overlay = document.getElementById('audioOverlay');
-            const overlayBtn = overlay.querySelector('button');
-            let audioStarted = false;
-            function tryPlayAudio() {
-                backgroundAudio.muted = false;
-                backgroundAudio.volume = 1;
-                backgroundAudio.play().then(() => {
-                    audioStarted = true;
-                    overlay.style.display = 'none';
-                }).catch(() => {
-                    // Show overlay if not already visible
-                    if (!audioStarted) overlay.style.display = 'flex';
-                });
-            }
-            tryPlayAudio();
-            // Fallback: play on first user interaction if blocked
-            document.body.addEventListener('click', tryPlayAudio, { once: true });
-            document.body.addEventListener('keydown', tryPlayAudio, { once: true });
-            overlayBtn.addEventListener('click', tryPlayAudio);
-        });
-    </script>
+      }
+
+      filteredProfiles = [...allProfiles];
+      animateCounter(allProfiles.length);
+      displayProfiles(filteredProfiles);
+
+      document.getElementById('searchInput').addEventListener('input', filterProfiles);
+      document.getElementById('religionFilter').addEventListener('change', filterProfiles);
+      document.getElementById('ageFilter').addEventListener('change', filterProfiles);
+      document.getElementById('prevPage').addEventListener('click', () => { if (currentPage > 1) { currentPage--; displayProfiles(filteredProfiles); } });
+      document.getElementById('nextPage').addEventListener('click', () => { if (currentPage < Math.ceil(filteredProfiles.length / ITEMS_PER_PAGE)) { currentPage++; displayProfiles(filteredProfiles); } });
+    }
+
+    initialize();
+  </script>
 </body>
 </html>
